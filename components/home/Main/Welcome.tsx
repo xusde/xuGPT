@@ -1,5 +1,6 @@
 import React from "react";
 import ModelSelect from "./ModelSelect";
+import Example from "./Example";
 
 const Welcome = () => {
   return (
@@ -8,6 +9,7 @@ const Welcome = () => {
       <h1 className="mt-20 text-4xl font-bold">
         ChatGPT For Free - GPT4 & GPT 3.5-turbo
       </h1>
+      <Example />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { IconType } from "react-icons";
 
 type ButtonProps = {
   icon?: IconType;
-  variant: "default" | "outline" | "text";
+  variant?: "default" | "outline" | "text";
 } & ComponentPropsWithoutRef<"button">;
 
 const Button = ({
