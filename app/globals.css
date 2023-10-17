@@ -7,3 +7,7 @@ body {
   height: 100%;
   font-size: 16px;
 }
+
+.primary-gradient {
+  background: linear-gradient(129deg, #3c8ad7 0%, #c0b8b0 100%);
+}
