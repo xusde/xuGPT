@@ -1,5 +1,6 @@
 import React from "react";
 import Menu from "./Menu";
+import Welcome from "./Welcome";
 
 const Main = () => {
   return (
@@ -8,6 +9,7 @@ const Main = () => {
     "
     >
       <Menu />
+      <Welcome />
     </div>
   );
 };

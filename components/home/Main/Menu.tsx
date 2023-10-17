@@ -10,13 +10,10 @@ const Menu = () => {
     state: { displayNav },
     dispatch,
   } = useAppContext();
-  //   const menures = useAppContext();
-  //   console.log({ menures });
 
-  //   const displayNav = true;
   return (
     <Button
-      className={`${displayNav ? "hidden" : ""} : fixed top-2 left-2`}
+      className={`${displayNav ? "hidden" : ""} : fixed left-2 top-2`}
       icon={LuPanelLeft}
       onClick={() =>
         dispatch({ type: ActionType.UPDATE, field: "displayNav", value: true })

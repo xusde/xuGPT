@@ -8,9 +8,9 @@ import { ActionType } from "@/reducers/AppReducer";
 const Menubar = () => {
   const { dispatch } = useAppContext();
   return (
-    <div className="flex space-x-3 justify-between">
+    <div className="flex justify-between space-x-3">
       <Button icon={HiPlus} variant="outline" className="flex-1">
-        {HiPlus} New Chat
+        New Chat
       </Button>
       <Button
         icon={LuPanelLeft}
