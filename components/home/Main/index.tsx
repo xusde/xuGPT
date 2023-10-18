@@ -2,15 +2,19 @@ import React from "react";
 import Menu from "./Menu";
 import Welcome from "./Welcome";
 import Example from "./Example";
+import ChatInput from "./ChatInput";
 
 const Main = () => {
   return (
-    <div
-      className="relative flex-1 overflow-y-auto bg-green-100 dark:bg-gray-700 dark:text-gray-100
+    <div className="relative flex-1">
+      <main
+        className=" h-full w-full overflow-y-auto bg-green-100 dark:bg-gray-700 dark:text-gray-100
     "
-    >
-      <Menu />
-      <Welcome />
+      >
+        <Menu />
+        <Welcome />
+        <ChatInput />
+      </main>
     </div>
   );
 };
