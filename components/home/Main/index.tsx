@@ -3,6 +3,7 @@ import Menu from "./Menu";
 import Welcome from "./Welcome";
 import Example from "./Example";
 import ChatInput from "./ChatInput";
+import Message from "./Message";
 
 const Main = () => {
   return (
@@ -12,7 +13,8 @@ const Main = () => {
     "
       >
         <Menu />
-        <Welcome />
+        <Message />
+        {/* <Welcome /> */}
         <ChatInput />
       </main>
     </div>

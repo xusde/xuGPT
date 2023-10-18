@@ -3,3 +3,8 @@ export interface Chat {
   title: string;
   updateTime: number;
 }
+export interface Message {
+  id: string;
+  role: "user" | "gpt";
+  content: string;
+}
