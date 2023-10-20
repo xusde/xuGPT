@@ -1,11 +1,13 @@
 import Button from "@/components/common/Button";
-import React from "react";
+import React, { useState } from "react";
 import { MdRefresh } from "react-icons/md";
 import { PiLightningFill } from "react-icons/pi";
 import { FiSend } from "react-icons/fi";
 import TextareaAutoSize from "react-textarea-autosize";
 
 const ChatInput = () => {
+  const [messageText, setMessageText] = useState("");
+  const send = () => {};
   return (
     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[rgba(255,255,255,0)] from-[13.94%] to-[#fff] to-[54.73%] pt-10 dark:from-[rgba(53,55,64,0)] dark:to-[#353740] dark:to-[58.85%]">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center space-y-4 px-4">
@@ -20,8 +22,14 @@ const ChatInput = () => {
             className="mb-1.5 max-h-64 flex-1 resize-none border-none bg-transparent text-black outline-none dark:text-white"
             placeholder="Enter a message"
             rows={1}
+            onChange={(e) => setMessageText(e.target.value)}
           />
-          <Button className="!rouned-lg mx-3" icon={FiSend} variant="primary" />
+          <Button
+            onClick={send}
+            className="mx-3 rounded-lg"
+            icon={FiSend}
+            variant="primary"
+          />
         </div>
       </div>
 
