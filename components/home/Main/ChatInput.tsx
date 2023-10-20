@@ -1,5 +1,5 @@
 import Button from "@/components/common/Button";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { MdRefresh } from "react-icons/md";
 import { PiLightningFill, PiStopBold } from "react-icons/pi";
 import { FiSend } from "react-icons/fi";
@@ -11,28 +11,35 @@ import { ActionType } from "@/reducers/AppReducer";
 
 const ChatInput = () => {
   const [messageText, setMessageText] = useState("");
+
+  const stopRef = useRef(false);
   const {
     state: { messageList, currentModel, streamingId },
     dispatch,
   } = useAppContext();
   const send = async () => {
     console.log("click send");
+    console.log({ messageText });
     const msg: Message = {
       id: uuidv4(),
       role: "user",
       content: messageText,
     };
 
-    const messages = messageList.concat(msg);
+    const messages = messageList.concat([msg]);
+    console.log({ messages });
+
     const body: MessageRequestBody = { messages, model: currentModel };
     dispatch({ type: ActionType.ADD_MSG, message: msg });
     setMessageText("");
+    const controller = new AbortController();
     const resp = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
     if (!resp.ok) {
       console.log(resp.statusText);
@@ -58,6 +65,11 @@ const ChatInput = () => {
     let done = false;
     let content = "";
     while (!done) {
+      if (stopRef.current) {
+        stopRef.current = false;
+        controller.abort();
+        break;
+      }
       const res = await reader.read();
       done = res.done;
       const chunk = decoder.decode(res.value);
@@ -72,7 +84,7 @@ const ChatInput = () => {
       field: "streamingId",
       value: "",
     });
-    // setMessageText("");
+    setMessageText("");
   };
 
   return (
@@ -81,6 +93,7 @@ const ChatInput = () => {
         {messageList.length > 0 &&
           (streamingId !== "" ? (
             <Button
+              onClick={() => (stopRef.current = true)}
               icon={PiStopBold}
               variant="outline"
               className="bg-red-400 font-medium"
