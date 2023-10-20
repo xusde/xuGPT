@@ -4,12 +4,10 @@ import { Action, State, initialState, reducer } from "@/reducers/AppReducer";
 import {
   Dispatch,
   ReactNode,
-  SetStateAction,
   createContext,
   useContext,
   useMemo,
   useReducer,
-  useState,
 } from "react";
 
 type AppContextProps = {

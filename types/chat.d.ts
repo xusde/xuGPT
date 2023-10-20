@@ -8,3 +8,8 @@ export interface Message {
   role: "user" | "gpt";
   content: string;
 }
+
+export interface MessageRequestBody {
+  messages: Message[];
+  model: string;
+}
