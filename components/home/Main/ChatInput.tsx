@@ -7,7 +7,66 @@ import TextareaAutoSize from "react-textarea-autosize";
 
 const ChatInput = () => {
   const [messageText, setMessageText] = useState("");
-  const send = () => {};
+  // console.log({ messageText });
+
+  // const send = async () => {
+  //   console.log("click send");
+
+  //   const body = JSON.stringify({ messageText });
+  //   const resp = await fetch("/api/chat", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body,
+  //   });
+  //   if (!resp.ok) {
+  //     console.log(resp.statusText);
+  //     return;
+  //   }
+  //   if (!resp.body) {
+  //     console.log("no body");
+  //     return;
+  //   }
+  //   const reader = resp.body.getReader();
+  //   const decoder = new TextDecoder();
+  //   let done = false;
+  //   while (!done) {
+  //     const res = await reader.read();
+  //     done = res.done;
+  //     const chunk = decoder.decode(res.value);
+  //     console.log(chunk);
+  //   }
+  //   setMessageText("");
+  // };
+  async function send() {
+    const body = JSON.stringify({ messageText });
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+    if (!response.ok) {
+      console.log(response.statusText);
+      return;
+    }
+    if (!response.body) {
+      console.log("body error");
+      return;
+    }
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    while (!done) {
+      const result = await reader.read();
+      done = result.done;
+      const chunk = decoder.decode(result.value);
+      console.log(chunk);
+    }
+    setMessageText("");
+  }
   return (
     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[rgba(255,255,255,0)] from-[13.94%] to-[#fff] to-[54.73%] pt-10 dark:from-[rgba(53,55,64,0)] dark:to-[#353740] dark:to-[58.85%]">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center space-y-4 px-4">
@@ -23,6 +82,7 @@ const ChatInput = () => {
             placeholder="Enter a message"
             rows={1}
             onChange={(e) => setMessageText(e.target.value)}
+            value={messageText}
           />
           <Button
             onClick={send}

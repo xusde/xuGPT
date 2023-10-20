@@ -36,3 +36,12 @@ export function groupByDate(chatList: Chat[]) {
   });
   return groupList;
 }
+
+// sleep for a while
+export function sleeps(time: number) {
+  return new Promise((resolve) =>
+    setTimeout(() => {
+      resolve("time is up");
+    }, time)
+  );
+}
