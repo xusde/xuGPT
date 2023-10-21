@@ -8,16 +8,21 @@ import { v4 as uuidv4 } from "uuid";
 import { Message, MessageRequestBody } from "@/types/chat";
 import { useAppContext } from "@/components/AppContext";
 import { ActionType } from "@/reducers/AppReducer";
+import { create } from "domain";
+import { useEventBusContext } from "@/components/EventBusContext";
 
 const ChatInput = () => {
   const [messageText, setMessageText] = useState("");
 
   const stopRef = useRef(false);
+  const chatIdRef = useRef("");
   const {
     state: { messageList, currentModel, streamingId },
     dispatch,
   } = useAppContext();
+  const { publish } = useEventBusContext();
 
+  // create or update message
   async function createOrUpdateMsg(msg: Message) {
     const resp = await fetch("/api/message/update", {
       method: "POST",
@@ -25,21 +30,37 @@ const ChatInput = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(msg),
-      // signal: controller.signal,
     });
     if (!resp.ok) {
       console.log(resp.statusText);
       return;
     }
     const { data } = await resp.json();
+    if (!chatIdRef.current) {
+      chatIdRef.current = data.message.chatId;
+      publish("fetchChatList");
+    }
     return data.message;
   }
+
+  // delete message
+  async function deleteMsg(id: string) {
+    const resp = await fetch(`/api/message/delete?id=${id}`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+    const { code } = await resp.json();
+    return code === 0;
+  }
+
   const send = async () => {
     const msg = await createOrUpdateMsg({
       id: "",
       role: "user",
       content: messageText,
-      chatId: "",
+      chatId: chatIdRef.current,
     });
     dispatch({ type: ActionType.ADD_MSG, message: msg });
     const messages = messageList.concat(msg);
@@ -66,12 +87,12 @@ const ChatInput = () => {
       console.log("no body");
       return;
     }
-    const respMsg: Message = {
-      id: uuidv4(),
+    const respMsg: Message = await createOrUpdateMsg({
+      id: "",
       role: "gpt",
       content: "",
-      chatId: "",
-    };
+      chatId: chatIdRef.current,
+    });
     dispatch({ type: ActionType.ADD_MSG, message: respMsg });
     dispatch({
       type: ActionType.UPDATE,
@@ -97,6 +118,7 @@ const ChatInput = () => {
         message: { ...respMsg, content },
       });
     }
+    createOrUpdateMsg({ ...respMsg, content });
     dispatch({
       type: ActionType.UPDATE,
       field: "streamingId",
@@ -110,6 +132,11 @@ const ChatInput = () => {
       messages.length !== 0 &&
       messages[messageList.length - 1].role === "gpt"
     ) {
+      const res = await deleteMsg(messages[messages.length - 1].id);
+      if (!res) {
+        console.log("delete failed");
+        return;
+      }
       dispatch({
         type: ActionType.REMOVE_MSG,
         message: messages[messages.length - 1],

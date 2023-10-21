@@ -1,8 +1,11 @@
 import { groupByDate } from "@/common/utils";
 import { Chat } from "@/types/chat";
-import React, { useMemo, useState } from "react";
-
+import React, { useEffect, useMemo, useState } from "react";
 import ChatItem from "./ChatItem";
+import {
+  useEventBusContext,
+  EventListener,
+} from "@/components/EventBusContext";
 
 const ChatList = () => {
   const [selectedItem, setSelectedItem] = useState<Chat | null>();
@@ -86,6 +89,18 @@ const ChatList = () => {
   const groupList = useMemo(() => {
     return groupByDate(chatList);
   }, [chatList]);
+  const { subscribe, unsubscribe } = useEventBusContext();
+  useEffect(() => {
+    const callback: EventListener = () => {
+      console.log("fetchChatList");
+    };
+    subscribe("fetchChatList", callback);
+
+    return () => {
+      unsubscribe("fetchChatList", callback);
+    };
+  }, []);
+
   return (
     <div className="mb-[48px] mt-2 flex flex-1 flex-col overflow-y-auto">
       {groupList.map(([date, list]) => {
