@@ -17,20 +17,37 @@ const ChatInput = () => {
     state: { messageList, currentModel, streamingId },
     dispatch,
   } = useAppContext();
+
+  async function createOrUpdateMsg(msg: Message) {
+    const resp = await fetch("/api/message/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(msg),
+      // signal: controller.signal,
+    });
+    if (!resp.ok) {
+      console.log(resp.statusText);
+      return;
+    }
+    const { data } = await resp.json();
+    return data.message;
+  }
   const send = async () => {
-    console.log("click send");
-    console.log({ messageText });
-    const msg: Message = {
-      id: uuidv4(),
+    const msg = await createOrUpdateMsg({
+      id: "",
       role: "user",
       content: messageText,
-    };
-
-    const messages = messageList.concat([msg]);
-    console.log({ messages });
-
-    const body: MessageRequestBody = { messages, model: currentModel };
+      chatId: "",
+    });
     dispatch({ type: ActionType.ADD_MSG, message: msg });
+    const messages = messageList.concat(msg);
+    dosend(messages);
+  };
+  const dosend = async (messages: Message[]) => {
+    const body: MessageRequestBody = { messages, model: currentModel };
+
     setMessageText("");
     const controller = new AbortController();
     const resp = await fetch("/api/chat", {
@@ -53,6 +70,7 @@ const ChatInput = () => {
       id: uuidv4(),
       role: "gpt",
       content: "",
+      chatId: "",
     };
     dispatch({ type: ActionType.ADD_MSG, message: respMsg });
     dispatch({
@@ -84,7 +102,21 @@ const ChatInput = () => {
       field: "streamingId",
       value: "",
     });
-    setMessageText("");
+    // setMessageText("");
+  };
+  const resend = async () => {
+    const messages = [...messageList];
+    if (
+      messages.length !== 0 &&
+      messages[messageList.length - 1].role === "gpt"
+    ) {
+      dispatch({
+        type: ActionType.REMOVE_MSG,
+        message: messages[messages.length - 1],
+      });
+      messages.splice(messages.length - 1, 1);
+    }
+    dosend(messages);
   };
 
   return (
@@ -101,7 +133,12 @@ const ChatInput = () => {
               Stop generating
             </Button>
           ) : (
-            <Button icon={MdRefresh} variant="primary" className="font-medium">
+            <Button
+              icon={MdRefresh}
+              onClick={() => resend()}
+              variant="primary"
+              className="font-medium"
+            >
               Regenerating
             </Button>
           ))}
