@@ -30,7 +30,7 @@ const Message = () => {
                 </div>
                 <div className="flex-1">
                   <Markdown>{`${msg.content} ${
-                    msg.id === streamingId && "▍"
+                    msg.id === streamingId ? "▍" : ""
                   }`}</Markdown>
                 </div>
               </div>
