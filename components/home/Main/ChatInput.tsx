@@ -1,5 +1,5 @@
 import Button from "@/components/common/Button";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdRefresh } from "react-icons/md";
 import { PiLightningFill, PiStopBold } from "react-icons/pi";
 import { FiSend } from "react-icons/fi";
@@ -17,7 +17,7 @@ const ChatInput = () => {
   const stopRef = useRef(false);
   const chatIdRef = useRef("");
   const {
-    state: { messageList, currentModel, streamingId },
+    state: { messageList, currentModel, streamingId, selectedChat },
     dispatch,
   } = useAppContext();
   const { publish } = useEventBusContext();
@@ -39,6 +39,11 @@ const ChatInput = () => {
     if (!chatIdRef.current) {
       chatIdRef.current = data.message.chatId;
       publish("fetchChatList");
+      dispatch({
+        type: ActionType.UPDATE,
+        field: "selectedChat",
+        value: { id: chatIdRef.current },
+      });
     }
     return data.message;
   }
@@ -67,6 +72,7 @@ const ChatInput = () => {
     dosend(messages);
   };
   const dosend = async (messages: Message[]) => {
+    stopRef.current = false;
     const body: MessageRequestBody = { messages, model: currentModel };
 
     setMessageText("");
@@ -105,7 +111,6 @@ const ChatInput = () => {
     let content = "";
     while (!done) {
       if (stopRef.current) {
-        stopRef.current = false;
         controller.abort();
         break;
       }
@@ -146,6 +151,13 @@ const ChatInput = () => {
     dosend(messages);
   };
 
+  useEffect(() => {
+    if (chatIdRef.current === selectedChat?.id) {
+      return;
+    }
+    chatIdRef.current = selectedChat?.id ?? "";
+    stopRef.current = true;
+  }, [selectedChat]);
   return (
     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-b from-[rgba(255,255,255,0)] from-[13.94%] to-[#fff] to-[54.73%] pt-10 dark:from-[rgba(53,55,64,0)] dark:to-[#353740] dark:to-[58.85%]">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center space-y-4 px-4">

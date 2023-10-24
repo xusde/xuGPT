@@ -1,103 +1,84 @@
 import { groupByDate } from "@/common/utils";
 import { Chat } from "@/types/chat";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ChatItem from "./ChatItem";
 import {
   useEventBusContext,
   EventListener,
 } from "@/components/EventBusContext";
+import { useAppContext } from "@/components/AppContext";
+import { ActionType } from "@/reducers/AppReducer";
 
 const ChatList = () => {
-  const [selectedItem, setSelectedItem] = useState<Chat | null>();
-  const [chatList, setChatList] = useState<Chat[]>([
-    {
-      id: "1",
-      title: "How to create a robust react project using next.js",
-      updateTime: 2666012800000,
-    },
-    {
-      id: "2",
-      title: "How to create a scalable react project using next.js",
-      updateTime: 2665590400000,
-    },
-    {
-      id: "3",
-      title: "How to create a high-performance react project using next.js",
-      updateTime: 2663574400000,
-    },
-    {
-      id: "4",
-      title: "How to create a secure react project using next.js",
-      updateTime: 2666012800000,
-    },
-    {
-      id: "5",
-      title: "How to create a reliable react project using next.js",
-      updateTime: 1665504000000,
-    },
-    {
-      id: "6",
-      title: "How to create a mobile-first react project using next.js",
-      updateTime: 1663411200000,
-    },
-    {
-      id: "7",
-      title: "How to create a cloud-based react project using next.js",
-      updateTime: 2666012800000,
-    },
-    {
-      id: "8",
-      title: "How to create an enterprise-level react project using next.js",
-      updateTime: 1665417600000,
-    },
-    {
-      id: "9",
-      title: "How to create a responsive react project using next.js",
-      updateTime: 1663248000000,
-    },
-    {
-      id: "10",
-      title: "How to create a real-time react project using next.js",
-      updateTime: 1666012800000,
-    },
-    {
-      id: "11",
-      title: "How to create a user-friendly react project using next.js",
-      updateTime: 1665331200000,
-    },
-    {
-      id: "12",
-      title: "How to create an accessible react project using next.js",
-      updateTime: 1663084800000,
-    },
-    {
-      id: "13",
-      title: "How to create a cross-platform react project using next.js",
-      updateTime: 1666012800000,
-    },
-    {
-      id: "14",
-      title: "How to create a modular react project using next.js",
-      updateTime: 1665244800000,
-    },
-    {
-      id: "15",
-      title: "How to create a test-driven react project using next.js",
-      updateTime: 1662998400000,
-    },
-  ]);
+  const {
+    state: { selectedChat: selectedItem },
+    dispatch,
+  } = useAppContext();
+  const [chatList, setChatList] = useState<Chat[]>([]);
+  const pageRef = useRef(1);
+  const loadMoreRef = useRef(null);
+  const hasMoreRef = useRef(false);
+  const isLoadingRef = useRef(false);
+
   const groupList = useMemo(() => {
     return groupByDate(chatList);
   }, [chatList]);
+
+  async function getData() {
+    if (isLoadingRef.current) {
+      return;
+    }
+    isLoadingRef.current = true;
+    const response = await fetch(`/api/chat/list?page=${pageRef.current}`, {
+      method: "GET",
+    });
+    if (!response.ok) {
+      console.log(response.statusText);
+      isLoadingRef.current = false;
+      return;
+    }
+    pageRef.current += 1;
+    const { data } = await response.json();
+    hasMoreRef.current = data.hasMore;
+    if (pageRef.current === 1) {
+      setChatList(data.list);
+    } else {
+      setChatList((list) => list.concat(data.list));
+    }
+    isLoadingRef.current = false;
+  }
   const { subscribe, unsubscribe } = useEventBusContext();
   useEffect(() => {
+    getData();
+  }, []);
+  useEffect(() => {
     const callback: EventListener = () => {
-      console.log("fetchChatList");
+      pageRef.current = 1;
+      getData();
     };
     subscribe("fetchChatList", callback);
 
     return () => {
       unsubscribe("fetchChatList", callback);
+    };
+  }, []);
+
+  useEffect(() => {
+    let observer: IntersectionObserver | null = null;
+    const div = loadMoreRef.current;
+    if (div) {
+      observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMoreRef.current) {
+          getData();
+        }
+      });
+      observer.observe(div);
+    }
+
+    return () => {
+      if (observer && div) {
+        observer.unobserve(div);
+      }
     };
   }, []);
 
@@ -117,7 +98,13 @@ const ChatList = () => {
                     key={chat.id}
                     chat={chat}
                     selected={selected}
-                    onSelected={(chat) => setSelectedItem(chat)}
+                    onSelected={(chat) => {
+                      dispatch({
+                        type: ActionType.UPDATE,
+                        field: "selectedChat",
+                        value: chat,
+                      });
+                    }}
                   />
                 );
               })}
@@ -125,6 +112,7 @@ const ChatList = () => {
           </div>
         );
       })}
+      <div ref={loadMoreRef}>&nbsp;</div>
     </div>
   );
 };

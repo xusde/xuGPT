@@ -9,7 +9,18 @@ const Menubar = () => {
   const { dispatch } = useAppContext();
   return (
     <div className="flex justify-between space-x-3">
-      <Button icon={HiPlus} variant="outline" className="flex-1">
+      <Button
+        onClick={() => {
+          dispatch({
+            type: ActionType.UPDATE,
+            field: "selectedChat",
+            value: null,
+          });
+        }}
+        icon={HiPlus}
+        variant="outline"
+        className="flex-1"
+      >
         New Chat
       </Button>
       <Button
