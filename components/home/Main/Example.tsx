@@ -2,7 +2,9 @@ import React, { useMemo, useState } from "react";
 import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import examples from "@/data/examples.json";
 import Button from "@/components/common/Button";
+import { useEventBusContext } from "@/components/EventBusContext";
 const Example = () => {
+  // local states
   const [showFull, setShowFull] = useState(false);
   const list = useMemo(() => {
     if (showFull) {
@@ -11,6 +13,7 @@ const Example = () => {
       return examples.slice(0, 15);
     }
   }, [showFull]);
+  const { publish } = useEventBusContext();
 
   return (
     <>
@@ -21,7 +24,12 @@ const Example = () => {
         {list.map((example) => {
           return (
             <li key={example.act}>
-              <Button variant={"default"}>{example.act}</Button>
+              <Button
+                onClick={() => publish("createNewChat", example.prompt)}
+                variant={"default"}
+              >
+                {example.act}
+              </Button>
             </li>
           );
         })}

@@ -45,6 +45,7 @@ const Message = () => {
       <ul>
         {messageList.map((msg) => {
           const isUser = msg.role === "user";
+
           return (
             <li
               key={msg.id}

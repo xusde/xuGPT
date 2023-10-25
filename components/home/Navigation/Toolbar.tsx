@@ -10,9 +10,6 @@ const Toolbar = () => {
     state: { theme },
     dispatch,
   } = useAppContext();
-  //   const toolres = useAppContext();
-  //   console.log({ toolres });
-  //   const theme = "light";
 
   return (
     <div className="absolute bottom-0 left-0 right-0  flex p-2 justify-between">

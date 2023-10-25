@@ -4,12 +4,15 @@ import { MdRefresh } from "react-icons/md";
 import { PiLightningFill, PiStopBold } from "react-icons/pi";
 import { FiSend } from "react-icons/fi";
 import TextareaAutoSize from "react-textarea-autosize";
-import { v4 as uuidv4 } from "uuid";
+
 import { Message, MessageRequestBody } from "@/types/chat";
 import { useAppContext } from "@/components/AppContext";
 import { ActionType } from "@/reducers/AppReducer";
-import { create } from "domain";
-import { useEventBusContext } from "@/components/EventBusContext";
+
+import {
+  useEventBusContext,
+  EventListener,
+} from "@/components/EventBusContext";
 
 const ChatInput = () => {
   const [messageText, setMessageText] = useState("");
@@ -20,7 +23,18 @@ const ChatInput = () => {
     state: { messageList, currentModel, streamingId, selectedChat },
     dispatch,
   } = useAppContext();
-  const { publish } = useEventBusContext();
+  const { publish, subscribe, unsubscribe } = useEventBusContext();
+
+  useEffect(() => {
+    const callback: EventListener = (data) => {
+      send(data);
+    };
+    subscribe("createNewChat", callback);
+
+    return () => {
+      unsubscribe("createNewChat", callback);
+    };
+  }, []);
 
   // create or update message
   async function createOrUpdateMsg(msg: Message) {
@@ -60,11 +74,11 @@ const ChatInput = () => {
     return code === 0;
   }
 
-  const send = async () => {
+  const send = async (mycontent: string) => {
     const msg = await createOrUpdateMsg({
       id: "",
       role: "user",
-      content: messageText,
+      content: mycontent,
       chatId: chatIdRef.current,
     });
     dispatch({ type: ActionType.ADD_MSG, message: msg });
@@ -135,7 +149,7 @@ const ChatInput = () => {
     const messages = [...messageList];
     if (
       messages.length !== 0 &&
-      messages[messageList.length - 1].role === "gpt"
+      messages[messageList.length - 1].role === "assistant"
     ) {
       const res = await deleteMsg(messages[messages.length - 1].id);
       if (!res) {
@@ -195,7 +209,7 @@ const ChatInput = () => {
           />
           <Button
             disabled={messageText.trim() === "" || streamingId !== ""}
-            onClick={send}
+            onClick={() => send(messageText)}
             className="mx-3 rounded-lg"
             icon={FiSend}
             variant="primary"

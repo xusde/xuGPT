@@ -9,10 +9,7 @@ const Navigation = () => {
   const {
     state: { displayNav },
   } = useAppContext();
-  // const navres = useAppContext();
-  // console.log({ navres });
 
-  // const displayNav = true;
   return (
     <nav
       className={`${displayNav ? "" : "hidden"} relative 

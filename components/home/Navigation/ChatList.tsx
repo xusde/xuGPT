@@ -37,7 +37,7 @@ const ChatList = () => {
       isLoadingRef.current = false;
       return;
     }
-    pageRef.current += 1;
+
     const { data } = await response.json();
     hasMoreRef.current = data.hasMore;
     if (pageRef.current === 1) {
@@ -45,6 +45,7 @@ const ChatList = () => {
     } else {
       setChatList((list) => list.concat(data.list));
     }
+    pageRef.current += 1;
     isLoadingRef.current = false;
   }
   const { subscribe, unsubscribe } = useEventBusContext();

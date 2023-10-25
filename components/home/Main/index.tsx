@@ -1,11 +1,16 @@
+"use client";
 import React from "react";
 import Menu from "./Menu";
 import Welcome from "./Welcome";
 import Example from "./Example";
 import ChatInput from "./ChatInput";
 import Message from "./Message";
+import { useAppContext } from "@/components/AppContext";
 
 const Main = () => {
+  const {
+    state: { selectedChat },
+  } = useAppContext();
   return (
     <div className="relative flex-1">
       <main
@@ -14,7 +19,8 @@ const Main = () => {
       >
         <Menu />
         <Message />
-        {/* <Welcome /> */}
+        {!selectedChat && <Welcome />}
+
         <ChatInput />
       </main>
     </div>

@@ -5,7 +5,7 @@ export interface Chat {
 }
 export interface Message {
   id: string;
-  role: "user" | "gpt";
+  role: "user" | "assistant";
   content: string;
   chatId: string;
 }
