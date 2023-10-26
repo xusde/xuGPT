@@ -4,7 +4,7 @@ export function groupByDate(chatList: Chat[]) {
   const groupMap = new Map<string, Chat[]>();
   chatList.forEach((item) => {
     const now = new Date();
-    const updateTime = new Date(item.updateTime);
+    const updateTime = new Date(item.updatedAt);
     let key = "unknown date";
     const dayDiff = Math.floor(
       (now.getTime() - updateTime.getTime()) / (1000 * 60 * 60 * 24)
