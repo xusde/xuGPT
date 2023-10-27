@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="#" >
+    <img src="pics/logo.png" alt="Logo" width="30%">
+  </a>
 
-## Getting Started
+  <h3 align="center">
+   An improved Chat-GPT clone built with Next.js, Azure OpenAI, Prisma, and SQlite .
+  </h3>
+</p>
+<p align="center">
+<img src="pics/welcome.jpg" style="width:100%;margin-left:auto" alt="img1" >   
+</p>
 
-First, run the development server:
+<!-- ABOUT THE PROJECT -->
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## About The Project
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**[XuGPT](https:#)** is an improved version of ChatGPT. It uses AZURE OpenAI underneath the hood to provide better artificial intelligence and machine learning support. Users can create multiple conversations, each with separate messages. Supports day and night modes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Welcome Page**: Users could click example buttons to start, or simply type their question, and choose their preferred AI models (e.g. gpt-3.5 or gpt-4).
+- **Separate Chat**: Different Chat has its own message history, and categorized by time, which make it easier for users to manage conversations for various use cases.
+- **Database storage, sorted by creation time**: All coversation history will be stored on database, and sorted by time, so that users don;t have to worry about data loss.
+- **Dark mode**: Supports night mode, more friendly to users’ eyes
 
-## Learn More
+<p align="center">
+<img src="pics/generate.jpg" style="width:45%; height:280px;margin-left:auto;" alt="img1" >   &emsp14;&emsp14;&emsp14;&emsp14;
+  &emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;&emsp14;
+  <img src="pics/renameChat.jpg" style="width:45%;margin-left:auto;height:280px" alt="img1" >
+</p>
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<p align="center">
+    <img src="pics/separateChat.jpg" style="width:100%;margin-left:auto;" alt="img1" >   
+</p>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+### Built With
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Next.js
+- TypeScript
+- Azure OpenAI
+- Prisma
+- SQLite
+- TailwindCSS

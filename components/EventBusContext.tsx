@@ -55,7 +55,7 @@ export default function EventBusContextProvider({
   const publish = useCallback(
     (event: string, data: any) => {
       if (listeners[event]) {
-        listeners[event].forEach((cb) => cb());
+        listeners[event].forEach((cb) => cb(data));
       }
     },
     [listeners]

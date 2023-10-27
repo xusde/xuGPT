@@ -2,7 +2,7 @@ export interface Chat {
   updatedAt: string | number | Date;
   id: string;
   title: string;
-  // updateTime: number;
+  updateTime: number;
 }
 export interface Message {
   id: string;

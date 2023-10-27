@@ -2,7 +2,6 @@
 import React from "react";
 import Menu from "./Menu";
 import Welcome from "./Welcome";
-import Example from "./Example";
 import ChatInput from "./ChatInput";
 import Message from "./Message";
 import { useAppContext } from "@/components/AppContext";

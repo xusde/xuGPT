@@ -62,7 +62,7 @@ const ChatList = () => {
     return () => {
       unsubscribe("fetchChatList", callback);
     };
-  }, []);
+  }, [subscribe, unsubscribe]);
 
   useEffect(() => {
     let observer: IntersectionObserver | null = null;
